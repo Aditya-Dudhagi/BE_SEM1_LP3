@@ -1,37 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract BankAccount {
-    address public owner;
+contract Bank{
     mapping(address => uint256) private balances;
 
-    event Deposited(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 amount);
-
-    constructor() {
-        owner = msg.sender; // Set the contract creator as the owner
-    }
-
-    // Deposit money into the bank account
     function deposit() public payable {
-        require(msg.value > 0, "Deposit amount must be greater than zero.");
-        
-        balances[msg.sender] += msg.value; // Increase the balance of the sender
-        emit Deposited(msg.sender, msg.value); // Emit deposit event
+        require(msg.value > 0, "Deposit must be greater than 0");
+        balances[msg.sender] += msg.value;
     }
 
-    // Withdraw money from the bank account
     function withdraw(uint256 amount) public {
-        require(amount > 0, "Withdrawal amount must be greater than zero.");
-        require(balances[msg.sender] >= amount, "Insufficient balance.");
+        require(amount>0, "Amount cannot be 0");
+        require(balances[msg.sender] >= amount, "Insufficient balance");
 
-        balances[msg.sender] -= amount; // Decrease the balance of the sender
-        payable(msg.sender).transfer(amount); // Transfer the amount to the sender
-        emit Withdrawn(msg.sender, amount); // Emit withdrawal event
+        balances[msg.sender] -= amount;
+
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "Transfer failed");
     }
 
-    // Show the balance of the bank account
-    function showBalance() public view returns (uint256) {
-        return balances[msg.sender]; // Return the balance of the sender
+    function showBalance() public view returns (uint256){
+        return balances[msg.sender];
     }
 }

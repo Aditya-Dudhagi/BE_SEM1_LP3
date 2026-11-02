@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract StudentData {
-    struct Student {
+contract StudentData{
+    struct Student{
         uint id;
         string name;
         uint age;
@@ -10,20 +10,17 @@ contract StudentData {
 
     Student[] public students;
 
-    fallback() external payable {}
-
-    function addStudent(string memory _name, uint _age) public {
-        uint studentId = students.length;
-        students.push(Student(studentId, _name, _age));
+    function addStudent(uint id, string memory name, uint age) public {
+        students.push(Student(id, name, age));
     }
 
-    function getStudent(uint _id) public view returns (uint, string memory, uint) {
-        require(_id < students.length, "Student ID does not exist.");
-        Student memory student = students[_id];
-        return (student.id, student.name, student.age);
+    function getStudent(uint index) public view
+    returns (Student memory){
+        return students[index];
     }
 
-    function getStudentCount() public view returns (uint) {
+    function totalStudents() public view 
+    returns (uint){
         return students.length;
     }
 }
